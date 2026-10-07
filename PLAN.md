@@ -20,7 +20,7 @@
 ## 2. Features (MVP → Vollausbau)
 ### Kern
 - [ ] Registrierung / Login / Logout (Session-Cookie)
-- [ ] Benutzerprofile: Anzeigename, Avatar-Farbe, Status-Bio
+- [ ] **Benutzerprofile (Fokus!)** — siehe Kap. 3c: Banner, Avatar, Farben, Bio, Pronomen, Badges, Theme & Profil-Editor mit Live-Vorschau
 - [ ] Server ("Guilds") erstellen, joinen per Invite-Code, verlassen, löschen
 - [ ] Kanäle (Text) in Kategorien, erstellen / umbenennen / löschen
 - [ ] Rollen mit Farben + Berechtigungen (admin, kanäle verwalten, verbannen …)
@@ -76,6 +76,41 @@
 - Ein Account pro Person: Registrierung offen fuer alle, die die URL kennen (optional Admin-Schalter "Registrierung schliessen")
 - Realtime via WebSocket laeuft ohne Zusatzkonfig ueber denselben Port/dieselbe URL
 
+## 3c. Benutzerprofile & Customization (Fokus-Bereich)
+### Profil-Aufbau (Discord "User Profile Card", zwei Groessen)
+```
++--------------------------------+   Popover: 340px breit
+| #########  BANNER 600x240  ####|   Vollprofil:  Modal ~740px (2 Spalten:
+|   [AV]  Anzeigename            |    links Karte wie rechts, rechts "Notizen")
+|         @handle · sie/er       |
+|--------------------------------|
+| UEBER MICH                     |
+|  "Bio-Text, mehrzeilig..."     |
+| MEMBER SINCE 12.03.2026        |
+| ROLLEN  [Admin][Moderator][...] |
+| ABZEICHEN  🛡️ ⭐ 🎉            |
+|--------------------------------|
+| [💬 Nachricht senden]          |
++--------------------------------+
+```
+
+### Customization-Features im Profil-Editor ("Benutzereinstellungen -> Mein Profil")
+- [ ] **Banner**: Upload (jpg/png/webp, empfohlen 1500x600, serverseitig zugeschnitten) ODER generierter Farbverlauf (Lineare Gradient-Presets + benutzerdefinierte 2 Farben mit Color-Picker) — beides waehlbar, Upload gewinnt
+- [ ] **Avatar**: Upload (auf 256px skaliert, rund gerendert) ODER Farb-Monogramm (Hintergrundfarbe aus Picker + Initialen); Avatar-Glow optional (Ring in eigener Farbe)
+- [ ] **Anzeigename** (displayName, frei waehlbar, unterscheidbar vom @username) und **Pronomen**-Feld (z.B. "er/ihm", "sie/ihren", "they/them")
+- [ ] **Bio / "Ueber mich"** (Markdown-Unterstuetzung, max. 190 Zeichen wie Discord)
+- [ ] **Akzent-/Namensfarbe** fuer Profil & Chat-Anzeige (Color-Picker mit Discord-Palette + freier Hex-Eingabe)
+- [ ] **App-Thema**: Dark/Light-Toggle + Akzentfarbe ueberschreiben (blurple, groen, rot, pink, orange ...), gespeichert in `users.settings` -> gilt auf allen Geraeten (nicht nur localStorage)
+- [ ] **Status**: online / abwesend / nicht stoeren / offline (automatisch nach Inaktivitaet, manuell ueberschreibbar) + Statustext
+- [ ] **Badges** (automatisch vergeben, im Profil sichtbar): 🛡️ Server-Owner, ⭐ Ersten 10 Mitglieder eines Servers, 🎉 Registrierungsjubilaeum, ✍️ Vielschreiber (1000+ Nachrichten) — small, aber macht Spass
+- [ ] Live-Vorschau im Editor: aenderungen zeigen sich sofort in einer Mini-Profilkarte rechts
+- [ ] Profil-Modal per Klick auf den eigenen Avatar unten links (eigene Seite mit "Bearbeiten"-Button) und Klick auf fremde Avatare/Namen im Chat
+
+### Design-Details Banner
+- Banner-Fallback wenn nichts gesetzt: dezenter Blurple-Duotone-Gradient (`linear-gradient(135deg,#5865f2,#414ee5)`) — sieht immer gut aus
+- Avatar ueberlappt Banner um ~28px, 6px Rand in Profil-Hintergrundfarbe (wie Discord)
+- Hover auf Banner im Vollprofil: leichter Zoom (scale 1.03)
+
 ## 4. Die `launch.sh` (Kern deines Wunsches)
 Sie soll **ein Befehl für alles** sein und direkt aus dem Repo arbeiten:
 ```bash
@@ -126,7 +161,7 @@ Was sie automatisch macht:
 - **Rail:** Runde Server-Icons (Hover -> abgerundetes Quadrat + Tooltip), Discord-/Home-Button, "+" zum Erstellen, Avatar unten links mit Status-Kreis
 - **Sidebar:** Servername als Header (Dropdown: Invite, Einstellungen, Server verlassen), Kategorie-Collapsables, aktive Kanaele hervorgehoben, Ungelesen-Badge
 - **Chat:** Nachrichtengruppierung wie oben, System-Nachrichten kursiv/grau, hover-Aktionen rechts oben pro Nachricht (Antworten, Reaktionen, Bearbeiten, Loeschen), Replies mit Einzug + Referenz-Zitat
-- **Rechts:** Mitgliederliste klickbar -> User-Profil-Popover (Avatar gross, Rolle, Bio, "Nachricht senden")
+- **Rechts:** Mitgliederliste klickbar -> **User-Profil-Popover** (340px, "User Profile Card" wie Discord): Banner oben (600x240), Avatar ueberlappt den Banner-Rand (72px, Statusring in Presence-Farbe), darunter Name (in Rollenfarbe), @handle, Pronomen, Trennlinie, "Ueber mich"-Box (Bio + Member-since), Rolle-Chips, Badges, Footer mit Aktionen ("Nachricht senden", "Profil ansehen") — Details in Kap. 3c
 - **Modals:** zentriert, `#1e1f22`, Blur-Backdrop — fuer Erstellen/Einladen/Bestaetigungen
 - **Responsive:** < 1000px blendet Mitgliederliste aus; < 768px wird Sidebar zum Overlay-Sheet (Handy-tauglich fuer die anderen Nutzer)
 - **Typografie:** System-Font-Stack aehnlich Discord ("gg sans" nicht verfuegbar -> Inter/system-ui), 15px Chat-Text, 12px Zeitstempel/Labels, UPPERCASE-Section-Header mit Letter-Spacing
@@ -143,7 +178,7 @@ Was sie automatisch macht:
 7. **Suche:** Lupe im Header -> Suchleiste, Ergebnisse im Chat-Fenster mit Highlight + Jump-to-Message
 
 ## 7. Datenmodell (SQLite, final)
-- `users(id, username UNIQUE, email, pass_hash, salt, avatar_path, bio, created_at)`
+- `users(id, username UNIQUE, display_name, pronouns, email, pass_hash, salt, avatar_path, banner_path, banner_css, accent_color, bio, status, status_text, settings JSON, created_at)` *(banner_css = gespeicherter Farbverlauf wenn kein Upload; settings = theme/accent/dnd praefereenzen)*
 - `sessions(token PK, user_id, created_at, expires_at)`
 - `guilds(id, name, icon_emoji, icon_color, owner_id, invite_code, open_reg, created_at)`
 - `members(guild_id+user_id PK, role_ids JSON, joined_at, banned 0/1)`
@@ -168,7 +203,8 @@ Server->Client: `msg:new`, `msg:update`, `msg:remove`, `react:update`, `typing`,
 3. **M3 Kern-Chats:** Guilds/Kanaele CRUD, Nachrichten REST + WS, Chat-UI mit 5-Spalten-Layout, Persistenz sichtbar
 4. **M4 Realtime-Feinschliff:** Typing, Presence, Ungelesen, Badges, member list, reactions/replies/mentions
 5. **M5 DMs + Moderation + Suche + Notifications + Uploads**
-6. **M6 Polishing:** Responsive, Light-Toggle, Sound, Onboarding-Empty-States, Readme mit Screenshot
+6. **M6 Profil-Fokus (Kap. 3c):** Profilkarten (Popover + Vollprofil-Modal), Banner-/Avatar-Upload, Farbverlauf-Banner, Pronomen/Bio/Akzentfarbe, Theme-Persistenz, Badges, Profil-Editor mit Live-Vorschau
+7. **M7 Polishing:** Responsive, Sound, Onboarding-Empty-States, Readme mit Screenshot
 Jeder Meilenstein endet mit einem Testlauf ueber `./launch.sh` bzw. `start.bat`.
 
 ## 10. Umsetzungs-Checkliste
