@@ -1,1 +1,7 @@
-(empty)
+# Dependencies
+node_modules/
+
+# Database files
+data/*.db
+data/*.db-shm
+data/*.db-wal
