@@ -49,7 +49,7 @@ function rateLimited(userId) {
 }
 
 function attach(server) {
-  wss = new WebSocketServer({ server });
+  wss = new WebSocketServer({ server, path: '/ws' });
 
   wss.on('connection', (ws, req) => {
     const user = auth.getSessionUser(req);
