@@ -60,6 +60,12 @@ if not exist "client\node_modules\.bin\vite.cmd" (
 ) else (
     echo   Client-Pakete vorhanden.
 )
+rem Ensure client package.json is present even in broken clones
+if not exist "client\package.json" (
+    echo   X client\package.json fehlt! Bitte Repo neu klonen: git clone https://github.com/robo-moritz/Discord-clone.git
+    pause
+    exit /b 1
+)
 
 :build
 echo.
