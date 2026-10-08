@@ -5,3 +5,4 @@ data/
 .built-hash
 server/data/
 client/dist/
+.built-hash
