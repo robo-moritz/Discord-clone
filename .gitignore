@@ -7,4 +7,7 @@ dist/
 # Database files (SQLite)
 data/*.db
 data/*.db-shm
-data/*.db-wal
+data/*.db-waldata/
+.built-hash
+.built-hash
+client/dist/
