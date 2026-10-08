@@ -47,12 +47,12 @@ if not exist "node_modules\better-sqlite3" (
 ) else (
     echo   Server-Pakete vorhanden.
 )
-if not exist "client\node_modules\vite" (
+if not exist "client\node_modules\.bin\vite.cmd" (
     echo   Installiere Client-Pakete... das kann 1-2 Minuten dauern.
     pushd client
     call npm install --no-audit --no-fund
     popd
-    if not exist "client\node_modules\vite" (
+    if not exist "client\node_modules\.bin\vite.cmd" (
         echo   X Client-Installation fehlgeschlagen!
         pause
         exit /b 1
@@ -69,6 +69,8 @@ call npm run build
 if errorlevel 1 (
     echo   X Client-Build fehlgeschlagen!
     popd
+    echo   --- Reparatur-Vorschlag: einmalig ausfuehren in diesem Ordner: ---
+    echo       rmdir /s /q client\node_modules ^&^& start.bat
     pause
     exit /b 1
 )
