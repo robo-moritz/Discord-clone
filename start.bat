@@ -30,21 +30,17 @@ echo.
 echo [2/4] Pruefe Abhaengigkeiten...
 where node >nul 2>nul
 if errorlevel 1 (
-    echo   X Node.js wurde in diesem Fenster nicht gefunden.
-    echo     Falls Node.js schon installiert ist: schliesse dieses Fenster
-    echo     und oeffne start.bat ERNEUT per Doppelklick
-    echo     ^(sonst sieht das alte Fenster die neue Installation nicht^).
-    echo     Falls nicht installiert: https://nodejs.org/de ^(LTS^) laden,
-    echo     installieren, dann start.bat erneut doppelklicken.
+    echo   X Node.js ist nicht installiert!
+    echo     Bitte herunterladen von https://nodejs.org/de (LTS-Version)
+    echo     ...dann diese Datei erneut doppelklicken.
     pause
     exit /b 1
 )
-for /f "delims=" %%V in ('node -v') do echo   Node.js %%V gefunden.
 if not exist "node_modules\better-sqlite3" (
     echo   Installiere Server-Pakete... das kann 1-2 Minuten dauern.
     call npm install --no-audit --no-fund
-    if errorlevel 1 (
-        echo   X npm install fehlgeschlagen - bitte Internet pruefen und erneut starten.
+    if not exist "node_modules\better-sqlite3" (
+        echo   X Server-Installation fehlgeschlagen!
         pause
         exit /b 1
     )
@@ -52,15 +48,15 @@ if not exist "node_modules\better-sqlite3" (
     echo   Server-Pakete vorhanden.
 )
 if not exist "client\node_modules\vite" (
-    echo   Installiere Client-Pakete...
+    echo   Installiere Client-Pakete... das kann 1-2 Minuten dauern.
     pushd client
     call npm install --no-audit --no-fund
-    if errorlevel 1 (
-        echo   X npm install ^(client^) fehlgeschlagen.
+    popd
+    if not exist "client\node_modules\vite" (
+        echo   X Client-Installation fehlgeschlagen!
         pause
         exit /b 1
     )
-    popd
 ) else (
     echo   Client-Pakete vorhanden.
 )
@@ -72,6 +68,7 @@ pushd client
 call npm run build
 if errorlevel 1 (
     echo   X Client-Build fehlgeschlagen!
+    popd
     pause
     exit /b 1
 )

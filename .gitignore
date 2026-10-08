@@ -1,6 +1,8 @@
 node_modules/
+dist/
 data/
+*.zip
+.built-hash
+server/data/
 client/dist/
 .built-hash
-*.db-wal
-*.db-shm
