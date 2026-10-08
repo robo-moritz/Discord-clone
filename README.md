@@ -37,11 +37,22 @@ Der Server lauscht auf Port **3000** an allen Netzwerkschnittstellen. Nach dem S
 
 Andere im selben WLAN/LAN öffnen einfach die Netzwerk-Adresse, registrieren sich und treten per Invite-Code deinem Server bei. Falls Windows beim ersten Start eine Firewall-Abfrage zeigt → „Zugriff zulassen" klicken.
 
-Damit andere dein Repo für `start.bat` nutzen können, push es auf GitHub/GitLab:
-```bat
-git remote add origin <REPO-URL>
-git push -u origin main
-```
+## Auf GitHub veröffentlichen (einmalig)
+
+1. Lege auf <https://github.com/new> ein **leeres, privates** Repo an (ohne README).
+2. Kopiere die angezeigte URL (`https://github.com/DIN-NAME/blurchat.git`) und führe im Projektordner aus:
+   ```bat
+   git remote add origin https://github.com/DIN-NAME/blurchat.git
+   git push -u origin main
+   ```
+3. Alle anderen (und dein Auto-Update!) nutzen dann diese URL beim Klonen:
+   ```bat
+   git clone https://github.com/DIN-NAME/blurchat.git
+   ```
+
+Tipp: Für private Repos braucht `git clone`/`git pull` einmalig deine GitHub-Anmeldung
+(der Passwort-Manager von Git fragt danach; am einfachsten mit einem „Personal Access Token").
+Alternativ das Repo auf „Public" stellen – dann klappt alles ohne Anmeldung.
 
 ## Features
 
