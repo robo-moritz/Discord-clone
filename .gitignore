@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+
+# Build Artifacts / Dist
+dist/
+
+# Database files (SQLite)
+data/*.db
+data/*.db-shm
+data/*.db-wal
