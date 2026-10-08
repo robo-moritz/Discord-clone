@@ -36,17 +36,29 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
-call :need_install package.json node_modules
-if "%NEED%"=="1" (
-    echo   Installiere Server-Pakete...
+if not exist "node_modules\better-sqlite3" (
+    echo   Installiere Server-Pakete... das kann 1-2 Minuten dauern.
     call npm install --no-audit --no-fund
+    if not exist "node_modules\better-sqlite3" (
+        echo   X Server-Installation fehlgeschlagen!
+        pause
+        exit /b 1
+    )
+) else (
+    echo   Server-Pakete vorhanden.
 )
-call :need_install client\package.json client\node_modules
-if "%NEED%"=="1" (
-    echo   Installiere Client-Pakete...
+if not exist "client\node_modules\vite" (
+    echo   Installiere Client-Pakete... das kann 1-2 Minuten dauern.
     pushd client
     call npm install --no-audit --no-fund
     popd
+    if not exist "client\node_modules\vite" (
+        echo   X Client-Installation fehlgeschlagen!
+        pause
+        exit /b 1
+    )
+) else (
+    echo   Client-Pakete vorhanden.
 )
 
 :build
@@ -54,6 +66,12 @@ echo.
 echo [3/4] Baue Client...
 pushd client
 call npm run build
+if errorlevel 1 (
+    echo   X Client-Build fehlgeschlagen!
+    popd
+    pause
+    exit /b 1
+)
 popd
 
 echo.
@@ -71,15 +89,4 @@ goto :eof
 :stop
 taskkill /f /im node.exe >nul 2>nul
 echo BlurChat gestoppt.
-goto :eof
-
-rem ------------------------------------------------------------
-rem Hilfsfunktion: NEED=1 wenn package.json neuer als node_modules
-rem ------------------------------------------------------------
-:need_install
-set NEED=1
-if not exist "%~2" goto :eof
-for %%A in ("%~1") do set "SRC=%%~tA"
-for %%B in ("%~2") do set "DST=%%~tB"
-if "%SRC%" LEQ "%DST%" set NEED=0
 goto :eof
