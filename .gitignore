@@ -1,15 +1,7 @@
-# Compiled/Binary files
-*.jar
-
-# Abhängigkeiten & Build-Artefakte (start.bat installiert/baut automatisch)
 node_modules/
-client/node_modules/
-client/dist/
-
-# Lokale Daten (Chat-Verlauf, Uploads) – bleiben auf jedem PC privat
+dist/
 data/
+*.zip
 .built-hash
-
-# Misc
-.DS_Store
-*.log
+server/data/
+client/dist/
